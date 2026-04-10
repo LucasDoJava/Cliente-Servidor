@@ -1,16 +1,20 @@
 package servidor;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class ThreadServidor extends Thread {
 
     private Socket socket;
+    private BlockingQueue<String> fila;
 
-    public ThreadServidor(Socket socket) {
+    public ThreadServidor(Socket socket, BlockingQueue<String> fila) {
         this.socket = socket;
+        this.fila = fila;
     }
 
     @Override
@@ -20,30 +24,32 @@ public class ThreadServidor extends Thread {
                 new InputStreamReader(socket.getInputStream())
             );
 
-            PrintStream saida = new PrintStream(socket.getOutputStream());
-
             String msg;
 
             while ((msg = reader.readLine()) != null) {
 
+                String resposta;
+
                 switch (msg) {
                     case "1":
-                        saida.println("Hora: " + LocalTime.now());
+                        resposta = "Hora: " + LocalTime.now();
                         break;
                     case "2":
-                        saida.println("Data: " + LocalDate.now());
+                        resposta = "Data: " + LocalDate.now();
                         break;
                     case "3":
-                        saida.println("Por que o milho verde é amarelo?");
+                        resposta = "Por que o milho verde é amarelo?";
                         break;
                     case "4":
-                        saida.println("Encerrando conexão...");
+                        resposta = "Encerrando conexão...";
+                        fila.put(resposta);
                         socket.close();
-                        ServidorSocket.clienteSaiu();
                         return;
                     default:
-                        saida.println("Opção inválida");
+                        resposta = "Opção inválida";
                 }
+
+                fila.put(resposta); 
             }
 
         } catch (Exception e) {

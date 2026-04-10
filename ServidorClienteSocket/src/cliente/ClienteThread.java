@@ -18,7 +18,7 @@ public class ClienteThread extends Thread{
 		BufferedReader reader = new BufferedReader(inputReader);
 		String x;
 		while((x = reader.readLine()) != null) {
-			System.out.println("Cliente: " + x);
+			System.out.println("Servidor: " + x);
 		}}
 		catch (Exception ex) {
 			ex.printStackTrace();
