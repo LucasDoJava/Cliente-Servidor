@@ -2,8 +2,13 @@ package servidor;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
+
+import objeto.Pessoa;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -60,6 +65,27 @@ public class ThreadServidor extends Thread {
                         socket.close();
                         ServidorSocket.clienteSaiu();
                         return;
+                    case "5":
+                        descricao = "Objeto serializado";
+
+                        System.out.println("===========================================");
+                        System.out.println("Cliente " + socket.getInetAddress() + " enviou um objeto");
+
+                        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                        Pessoa p = (Pessoa) in.readObject();
+
+                        System.out.println("Objeto recebido: " + p);
+
+                        p.setNome(p.getNome() + " [Servidor]");
+                        p.setIdade(p.getIdade() + 1);
+
+                        fila.put("OBJETO");
+
+                        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                        out.writeObject(p);
+                        out.flush();
+
+                        continue;
                     default:
                     	descricao = "Opção inválida";
                         resposta = "Opção inválida";
