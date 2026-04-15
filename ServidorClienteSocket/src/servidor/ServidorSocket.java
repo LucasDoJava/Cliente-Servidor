@@ -1,6 +1,7 @@
 package servidor;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
@@ -21,13 +22,16 @@ public class ServidorSocket {
             
                 if (clientesAtivos >= MAX_CLIENTES) {
                     System.out.println("Limite de clientes atingido!");
+                    
+                    PrintStream saida = new PrintStream(socket.getOutputStream());
+                    saida.println("Conexão não aceita, fique no aguardo ou tente novamente depois!");
                     socket.close();
                     continue;
                 }
                 clientesAtivos++;
             
 
-            System.out.println("Cliente conectado!");
+            System.out.println("Cliente " + socket.getInetAddress() + " conectado!");
             
             BlockingQueue<String> fila = new LinkedBlockingQueue<>();
 
