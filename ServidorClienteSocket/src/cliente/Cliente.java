@@ -34,7 +34,7 @@ public class Cliente {
         System.out.println("2 - Data");
         System.out.println("3 - Me fale algo legal");
         System.out.println("4 - Sair");
-        System.out.println("5 - Objeto serializado");
+        System.out.println("5 - Objeto JSON");
         System.out.println("===========================================");
       
         new ClienteThread(socket).start();

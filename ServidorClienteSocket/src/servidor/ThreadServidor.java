@@ -2,13 +2,8 @@ package servidor;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
-
-import objeto.Pessoa;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -66,24 +61,19 @@ public class ThreadServidor extends Thread {
                         ServidorSocket.clienteSaiu();
                         return;
                     case "5":
-                        descricao = "Objeto serializado";
+                        descricao = "Objeto JSON";
 
                         System.out.println("===========================================");
                         System.out.println("Cliente " + socket.getInetAddress() + " enviou um objeto");
 
-                        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                        Pessoa p = (Pessoa) in.readObject();
+                        String json = reader.readLine();
 
-                        System.out.println("Objeto recebido: " + p);
+                        System.out.println("JSON recebido: " + json);
 
-                        p.setNome(p.getNome() + " [Servidor]");
-                        p.setIdade(p.getIdade() + 1);
+                        json = json.replace("\"idade\":22", "\"idade\":23");
 
                         fila.put("OBJETO");
-
-                        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                        out.writeObject(p);
-                        out.flush();
+                        fila.put(json);
 
                         continue;
                     default:
